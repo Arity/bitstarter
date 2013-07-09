@@ -38,21 +38,21 @@ var assertFileExists = function(infile) {
     return instr;
 };
 
-var assertURLExists = function(url) {
-    restler.get(url).on("complete", function(result) {
-        if (result instanceof Error) {
-            console.log("Error: " + result.message);
-        } else {
-            checkHtmlURL(result, program.checks);
-        }
-    })
-}
 var cheerioHtmlFile = function(htmlfile) {
     return cheerio.load(fs.readFileSync(htmlfile));
 };
 
 var loadChecks = function(checksfile) {
     return JSON.parse(fs.readFileSync(checksfile));
+};
+var assertURLExists = function(url, programchecks) {
+    restler.get(url).on("complete", function(result) {
+        if (result instanceof Error) {
+            console.log("Error: " + result.message);
+        } else {
+            checkHtmlURL(result, programchecks);
+        }
+    })
 };
 
 var checkHtmlURL = function(htmlfile, checksfile) {
@@ -90,7 +90,7 @@ if(require.main == module) {
         .parse(process.argv);
 
     if (program.url) {
-        var checkJson = checkHtmlURL(program.url, program.checks);
+        var checkJson = assertFileExists(program.url, program.checks)
         var outJson = JSON.stringify(checkJson, null, 4);
         console.log(outJson);
     } else {
