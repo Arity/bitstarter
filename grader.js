@@ -50,7 +50,9 @@ var assertURLExists = function(url, programchecks) {
         if (result instanceof Error) {
             console.log("Error: " + result.message);
         } else {
-            checkHtmlURL(result, programchecks);
+            result = checkHtmlURL(result, programchecks);
+            var outJson = JSON.stringify(result, null, 4)
+            console.log(outJson);
         }
     })
 };
@@ -65,6 +67,7 @@ var checkHtmlURL = function(htmlfile, checksfile) {
     }
     return out;
 };
+
 var checkHtmlFile = function(htmlfile, checksfile) {
     $ = cheerioHtmlFile(htmlfile);
     var checks = loadChecks(checksfile).sort();
@@ -90,9 +93,8 @@ if(require.main == module) {
         .parse(process.argv);
 
     if (program.url) {
-        var checkJson = assertFileExists(program.url, program.checks)
-        var outJson = JSON.stringify(checkJson, null, 4);
-        console.log(outJson);
+        console.log("Checking Url...");
+        assertURLExists(program.url, program.checks);
     } else {
        var checkJson = checkHtmlFile(program.file, program.checks);
        var outJson = JSON.stringify(checkJson, null, 4);
